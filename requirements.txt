@@ -1,0 +1,11 @@
+# 生产环境依赖
+python-dateutil==2.8.2
+openpyxl==3.0.10
+
+# 开发环境依赖
+pytest==7.0.0
+black==22.3.0
+flake8==4.0.1
+
+# 打包依赖
+pyinstaller==5.1.0

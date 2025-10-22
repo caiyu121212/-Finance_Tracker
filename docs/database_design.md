@@ -21,4 +21,4 @@
 - id: INTEGER PRIMARY KEY
 - category: TEXT (分类)
 - amount: REAL (预算金额)
-- month: TEXT (月份)
+- month: TEXT (月份)git
