@@ -1,8 +1,11 @@
 import tkinter as tk
+import sys
+import os
 from tkinter import ttk,messagebox
 from datetime import datetime,timedelta
 from services.transaction_service import TransactionService
 from services.category_service import CategoryService
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 class MainWindow:
     def __init__(self,root):
