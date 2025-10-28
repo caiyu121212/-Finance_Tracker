@@ -3,15 +3,17 @@ import sys
 import os
 from tkinter import ttk,messagebox
 from datetime import datetime,timedelta
-from services.transaction_service import TransactionService
-from services.category_service import CategoryService
+project_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+sys.path.insert(0, project_root)
+from src.services.transaction_service import TransactionService
+from src.services.category_service import CategoryService
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 class MainWindow:
     def __init__(self,root):
         self.root = root
         self.root.title("个人记账系统 V1.0")
-        self.root.geometry("1000*700")
+        self.root.geometry("1000x700")
 
         #初始化服务
         self.transaction_service = TransactionService()
@@ -40,7 +42,7 @@ class MainWindow:
         stats_frame.grid(row=0, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=(0, 10))
 
         # 统计信息标签
-        self.balance_label = ttk.Label(stats_frame, text="总余额: 加载中...", font=('Arial', 12, 'bold'))
+        self.balance_label = ttk.Label(stats_frame, text="总余额: 加载中...", font=('', 12, 'bold'))
         self.balance_label.grid(row=0, column=0, padx=(0, 20))
 
         self.income_label = ttk.Label(stats_frame, text="总收入: 加载中...", foreground="green")
@@ -172,7 +174,7 @@ class MainWindow:
             amount_text = f"+{trans['amount']}" if trans['type'] == 'income' else f"-{trans['amount']}"
             self.tree.insert("", "end", values=(
                 trans['id'],
-                trans['date'],
+                trans['data'],
                 "收入" if trans['type'] == 'income' else "支出",
                 amount_text,
                 trans['category'],

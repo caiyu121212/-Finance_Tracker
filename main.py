@@ -1,11 +1,14 @@
 import tkinter as tk
-from src.gui.main_window import MainWindow
 import os
 import sys
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, project_root)
+from src.gui.main_window import MainWindow
+from config import Config
 
 def main():
     try:
+        db_dir = os.path.dirname(Config.DATABASE_PATH)
         root = tk.Tk()
         app = MainWindow(root)
         root.mainloop()
