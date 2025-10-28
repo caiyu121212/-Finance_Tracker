@@ -1,12 +1,14 @@
 import pytest
 import os
-from src.models.database import DatebaseManager
+import sys
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, project_root)
+from src.models.database import DatabaseManager
 
 class TestDataManager:
-
     #测试数据库和表创建
     def test_database_creation(self,temp_database):
-        db = DatebaseManager()
+        db = DatabaseManager()
         tables = db.fetch_all("SELECT name FROM sqlite_master WHERE type='table'")
         table_names = [table['name'] for table in tables]
         assert 'transactions' in table_names
@@ -14,8 +16,9 @@ class TestDataManager:
         print("数据表创建成功")
 
 
+
     def test_default_categories(self):
-        db = DatebaseManager()
+        db = DatabaseManager()
         categories = db.fetch_all("SELECT * FROM categories")
 
 

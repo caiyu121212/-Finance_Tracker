@@ -8,6 +8,7 @@ import time
 
 class FinanceTrackerTester:
     def __init__(self):
+        self.project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         self.test_plan = [
             {
                 'name':'数据库基础测试',
@@ -23,13 +24,13 @@ class FinanceTrackerTester:
             },
             {
                 'name':'分类测试服务',
-                'file':'tests/unit/test_transaction.py',
+                'file':'tests/unit/test_transaction_service.py',
                 'command':'category',
                 'description':'测试分类管理和验证'
             },
             {
                 'name':'服务集成测试',
-                'file':'tests/integration/test_service_transaction.py',
+                'file':'tests/integration/test_service_integration.py',
                 'command':'integration',
                 'description':'测试服务间协作和数据流'
             },
@@ -45,6 +46,8 @@ class FinanceTrackerTester:
                 'description':'运行完整测试套件'
             }
         ]
+    def get_full_path(self,relative_path):
+        return os.path.join(self.project_root,relative_path)
 
 #运行单个测试文件
     def run_single_test(self,test_file):
@@ -55,8 +58,10 @@ class FinanceTrackerTester:
         print(f"开始测试{test_file}")
         start_time = time.time()
 
+        python_executable = sys.executable
+
         result = subprocess.run([
-              'python','-m','pytest',
+              python_executable,'-m','pytest',
             test_file,
             '-v','--tb=short','--color=yes'
         ],capture_output=True,text=True)
@@ -96,23 +101,22 @@ class FinanceTrackerTester:
     #运行指定步骤
     def run_step(self,step_name):
         for step in self.test_plan:
-            if step['name'] == step_name:
+            if step['command'] == step_name:
                 print(f"执行：{step['name']}")
                 print(f"{step['description']}")
-
-            if 'file' in step:
-                return self.run_single_test(step['file'])
-            elif step['command'] == 'all':
-                return self.run_all_tests()
-            else:
-                print("未知的测试步骤")
-                return False
+                if 'file' in step:
+                    return self.run_single_test(step['file'])
+                elif step['command'] == 'all':
+                    return self.run_all_tests()
+                else:
+                    print("未知的测试步骤")
+                    return False
 
         print(f"未找到测试步骤：{step_name}")
         return False
 
 #运行所有测试
-    def run_all_test(self):
+    def run_all_tests(self):
         print("\n 开始完整测试套件...")
         success = True
 
@@ -134,7 +138,6 @@ class FinanceTrackerTester:
 
 def main():
     tester = FinanceTrackerTester()
-
     if len(sys.argv)<2:
         print("🔧 Finance Tracker 渐进式测试系统")
         print("用法: python scripts/test_gradual.py <步骤>")
@@ -156,7 +159,8 @@ def main():
         success = tester.run_step(command)
         sys.exit(0 if success else 1)
 
-    if __name__ == '__main__':
+if __name__ == '__main__':
+        print("python 路径：",sys.executable)
         main()
 
 

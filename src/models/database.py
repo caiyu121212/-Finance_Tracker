@@ -2,11 +2,15 @@ import os
 import sys
 import sqlite3
 from datetime import datetime
-project_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-# 添加项目根目录到 Python 路径
-sys.path.insert(0, project_root)
+
+current_dir = os.path.abspath(__file__)
+models_dir = os.path.dirname(current_dir)
+src_dir = os.path.dirname(models_dir)
+project_root = os.path.dirname(src_dir)
+sys.path.insert(0,project_root)
 
 from config import Config
+
 
 # ====== 数据库管理器类 ======
 class DatabaseManager:
@@ -17,7 +21,7 @@ class DatabaseManager:
 
     #获取数据库连接
     def _get_connection(self):
-        os.makedirs(os.path.dirname(self.da_path),exist_ok=True)
+        os.makedirs(os.path.dirname(self.db_path),exist_ok=True)
         conn = sqlite3.connect(self.db_path)
         conn.row_factory =sqlite3.Row
         return conn
@@ -39,6 +43,7 @@ class DatabaseManager:
                 updated_at TEXT DEFAULT CURRENT_TIMESTAMP
                 )
                 ''')
+
             #分类表
             conn.execute('''
                 CREATE TABLE IF NOT EXISTS categories(
@@ -47,6 +52,7 @@ class DatabaseManager:
                 type TEXT NOT NULL CHECK(type IN ('income','expense')),
                 color TEXT DEFAULT '#000000')
                 ''')
+
 
             #预算表
             conn.execute('''
@@ -57,20 +63,20 @@ class DatabaseManager:
                  month TEXT NOT NULL,
                  created_at TEXT DEFAULT CURRENT_TIMESTAMP)
             ''')
-
             conn.commit()
         finally:
             conn.close()
 
     #初始化默认数据
     def _init_default_data(self):
+        print("📝 开始初始化默认数据...")
         conn = self._get_connection()
         try:
             default_categories = [
                 ('工资','income','#4CAF50'),
                 ('奖金','income','#8BC34A'),
-                ('','income','#CDDC39'),
-                ('','income','#FFC107'),
+                ('投资','income','#CDDC39'),
+                ('其他收入','income','#FFC107'),
                 ('餐饮','expense','#F44336'),
                 ('交通','expense','#E91E63'),
                 ('购物','expense','#9C27B0'),
@@ -84,9 +90,9 @@ class DatabaseManager:
                     'INSERT OR IGNORE INTO categories(name,type,color) VALUES (?,?,?)',
                     (name,type,color)
                 )
-                conn.commit()
+            conn.commit()
         finally:
-                conn.close()
+            conn.close()
 
     #执行查询
     def execute_query(self,query,params=()):

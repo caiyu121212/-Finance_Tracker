@@ -3,16 +3,17 @@ import os
 import sys
 project_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 sys.path.insert(0, project_root)
-from models.database import DatebaseManager
+from src.models.database import DatabaseManager
 
 class TransactionService:
-    def __init__(self):
-        self.db = DatebaseManager()
+    print(project_root)
+    def __init__(self,db_path=None):
+        self.db = DatabaseManager()
 
         #添加交易记录
     def add_transaction(self,date,trans_type,amount,category,description=""):
         query = """
-        INSERT INTO transactions(date,type,amount,category,description)
+        INSERT INTO transactions(data,type,amount,category,description)
         VALUES (?,?,?,?,?)
         """
         self.db.execute_query(query,(date,trans_type,amount,category,description))
@@ -26,15 +27,15 @@ class TransactionService:
             params.append(start_date)
 
         if end_date:
-            query += "AND date<=?"
+            query += " AND date<=?"
             params.append(end_date)
         if category:
-            query += "AND category=?"
+            query += " AND category=?"
             params.append(category)
         if trans_type:
-            query += "AND type=?"
+            query += " AND type=?"
             params.append(trans_type)
-        query += "ORDER BY date DESC"
+        query += " ORDER BY data DESC"
         return self.db.fetch_all(query,params)
 
     def update_transaction(self,transaction_id,date,amount,category,description):
